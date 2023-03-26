@@ -1,38 +1,31 @@
 #include <iostream>
-#include <locale>
-#include <Windows.h>
+#include "CoreMinimal.h"
 
-#define FE_LOG(Format, ...) \
-	printf("Log: "##Format"\n", ##__VA_ARGS__)
-
-#pragma 
-
-#define MY_MACRO(x) \
-    do { \
-        if ((x) < 0) { \
-            /* Output a warning message */ \
-			_Pragma ("message( \"the _Pragma way\")") \
-        } \
-        /* ... */ \
-    } while (0);
-
-typedef wchar_t WIDECHAR;
-typedef WIDECHAR TCHAR;
-
+// fixed deltaTime update
 void EngineLoop()
 {
-	MY_MACRO(-1);
+	float deltaTime = 0.0f;
+	int64 engineTickCountOnStart = GetTickCount64();
+	float currentTime = 0.0f;
+	float lastTime = 0.0f;
 	while (true)
 	{
-		/*wchar_t chinese_char2 = L'\x6211';
-		printf("%lc\n", chinese_char2);*/ 
+		while (deltaTime < MIN_DELTATIME)
+		{
+			currentTime = (GetTickCount64() - engineTickCountOnStart) / 1000.0f;
+			deltaTime = currentTime - lastTime;
+		}
+
+		FE_LOG("Engine Tick: %f", deltaTime);
+
+		lastTime = currentTime;
+		deltaTime = 0.0f;
 	}
 }
 
 int main()
 {
-	setlocale(LC_ALL, ".utf8");
-	
+	FE_LOG("FrozenEngine v0.1");
 	EngineLoop();
 	return 0;
 }
